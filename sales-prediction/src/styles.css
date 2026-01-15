@@ -1,0 +1,37 @@
+body {
+  font-family: Arial;
+  background: #f5f6ff;
+}
+.container {
+  width: 90%;
+  margin: auto;
+}
+.title {
+  text-align: center;
+  color: #7c3aed;
+}
+.upload-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+table {
+  width: 100%;
+  background: white;
+  margin-top: 20px;
+}
+th, td {
+  padding: 10px;
+  text-align: center;
+}
+.cards {
+  display: flex;
+  gap: 20px;
+}
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  flex: 1;
+  font-size: 18px;
+}

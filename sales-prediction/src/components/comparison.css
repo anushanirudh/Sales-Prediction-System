@@ -1,0 +1,15 @@
+.comparison-container {
+  background: white;
+  padding: 24px;
+  border-radius: 14px;
+  margin-top: 20px;
+}
+
+.comparison-container h2 {
+  margin-bottom: 4px;
+}
+
+.comparison-container p {
+  color: #6b7280;
+  margin-bottom: 20px;
+}
