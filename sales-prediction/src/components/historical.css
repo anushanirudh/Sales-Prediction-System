@@ -1,0 +1,39 @@
+.history-container {
+  background: white;
+  padding: 24px;
+  border-radius: 14px;
+  margin-top: 20px;
+}
+
+.history-container h2 {
+  margin-bottom: 4px;
+}
+
+.history-container p {
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.history-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}

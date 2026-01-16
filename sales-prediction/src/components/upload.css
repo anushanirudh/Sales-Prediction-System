@@ -1,0 +1,52 @@
+.upload-container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  margin: 30px 0;
+}
+
+.upload-container h2 {
+  margin-bottom: 5px;
+}
+
+.upload-box {
+  margin-top: 20px;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.csv-info {
+  background: #f8f9ff;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.upload-btn {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sample-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.note {
+  margin-top: 10px;
+  color: #666;
+}
