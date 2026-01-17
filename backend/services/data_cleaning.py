@@ -1,6 +1,10 @@
 import pandas as pd
 
 def clean_data(df):
+
+    # 🔥 REMOVE hidden spaces
+    df.columns = df.columns.str.strip()
+
     # 1. Remove duplicate rows
     df = df.drop_duplicates()
 

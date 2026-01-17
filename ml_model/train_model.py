@@ -21,12 +21,12 @@ def train_model():
         "lag_1",
         "lag_12",
         "rolling_3",
-        "Cost Price",
-        "Selling Price"
+        "Cost_Price",
+        "Selling_Price"
     ]
 
     X = df[features]
-    y = df["Quantity Sold"]
+    y = df["Quantity"]
 
     split = int(len(df) * 0.8)
     X_train, X_test = X.iloc[:split], X.iloc[split:]

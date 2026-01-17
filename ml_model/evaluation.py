@@ -15,13 +15,13 @@ def evaluate_model():
     df = create_features(df)
 
     features = [
-        "month",
+        "Month",
         "year",
         "lag_1",
         "lag_12",
         "rolling_3",
-        "Cost Price",
-        "Selling Price"
+        "Cost_Price",
+        "Selling_Price"
     ]
 
     importance = pd.Series(

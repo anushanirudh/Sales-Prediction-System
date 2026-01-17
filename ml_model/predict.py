@@ -24,19 +24,19 @@ def predict_next_month():
     next_month = last_row["Month"] + pd.DateOffset(months=1)
 
     input_data = pd.DataFrame({
-        "month": [next_month.month],
+        "Month": [next_month.month],
         "year": [next_month.year],
-        "lag_1": [last_row["Quantity Sold"]],
-        "lag_12": [df.iloc[-12]["Quantity Sold"]],
-        "rolling_3": [df.tail(3)["Quantity Sold"].mean()],
-        "Cost Price": [last_row["Cost Price"]],
-        "Selling Price": [last_row["Selling Price"]]
+        "lag_1": [last_row["Quantity"]],
+        "lag_12": [df.iloc[-12]["Quantity"]],
+        "rolling_3": [df.tail(3)["Quantity"].mean()],
+        "Cost_Price": [last_row["Cost_Price"]],
+        "Selling_Price": [last_row["Selling_Price"]]
     })
 
     forecast = model.predict(input_data)[0]
     recommended_stock = int(round(forecast * (1 + SAFETY_BUFFER)))
 
-    variance = df["Quantity Sold"].tail(6).std()
+    variance = df["Quantity"].tail(6).std()
 
     risk = "Low"
     if variance > 30:

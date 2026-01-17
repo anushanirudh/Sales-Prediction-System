@@ -1,4 +1,4 @@
-Product,Month,Quantity Sold,Revenue ($),Cost Price,Selling Price
+Product,Month,Quantity,Revenue,Cost_Price,Selling_Price
 Rice (kg),2025-07,180,15120,28,38
 Rice (kg),2025-08,135,11340,65,95
 Rice (kg),2025-09,109,9156,43,79
