@@ -17,11 +17,25 @@ export default function Dashboard() {
 
   // tab state
   const [active, setActive] = useState("recommend");
+  
 
   return (
+    
     <div className="dashboard-container">
       {/* CSV UPLOAD (sets appData) */}
-      <UploadForm setAppData={setAppData} />
+         <div className="container">
+            <h1 className="title">Smart Inventory Predictor</h1>
+            <p className="subtitle">
+              AI-powered inventory management system that analyzes your sales history
+              and recommends optimal order quantities
+            </p>
+      
+            <UploadForm setAppData={setAppData} />
+      
+            
+          </div>
+      
+      
 
       {/* TAB BAR */}
       <Tabbar active={active} setActive={setActive} />
