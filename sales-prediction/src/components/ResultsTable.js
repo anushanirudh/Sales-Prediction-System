@@ -1,8 +1,11 @@
-import "./recommend.css";
+export default function ResultsTable({ data = [] }) {
 
-export default function ResultsTable({ data }) {
+  if (!data.length) {
+    return <p>No prediction data available</p>;
+  }
+
   return (
-    <table className="rec-table">
+    <table className="results-table">
       <thead>
         <tr>
           <th>Product</th>
@@ -16,20 +19,25 @@ export default function ResultsTable({ data }) {
           <th>Confidence</th>
         </tr>
       </thead>
+
       <tbody>
-        {data.map((p) => (
-          <tr key={p.product}>
-            <td>{p.product}</td>
-            <td className={p.trend > 0 ? "up" : "down"}>
-              {p.trend > 0 ? "▲" : "▼"} {p.trend}%
+        {data.map((row, index) => (
+          <tr key={index}>
+            <td>{row.product}</td>
+            <td>{row.trend}</td>
+            <td>{row.avg_sales}</td>
+            <td>{row.predicted_demand}</td>
+            <td className="blue">{row.recommended_order}</td>
+            <td>${Number(row.investment || 0).toFixed(2)}</td>
+            <td className="green">
+              ${Number(row.expected_profit || 0).toFixed(2)}
             </td>
-            <td>{p.avg}</td>
-            <td>{p.predicted}</td>
-            <td className="blue">{p.recommended}</td>
-            <td>${p.investment.toFixed(2)}</td>
-            <td className="green">${p.profit.toFixed(2)}</td>
-            <td>{p.margin}%</td>
-            <td><span className="pill">high</span></td>
+            <td>{row.margin}%</td>
+            <td>
+              <span className={`badge ${row.confidence}`}>
+                {row.confidence}
+              </span>
+            </td>
           </tr>
         ))}
       </tbody>
