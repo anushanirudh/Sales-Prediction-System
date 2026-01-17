@@ -31,20 +31,18 @@ def predict_next_month():
     for product in df["Product"].unique():
 
         prod_df = df[df["Product"] == product].sort_values("Month")
-        last_row = prod_df.iloc[-1]
 
+        last_row = prod_df.iloc[-1]
         next_month_date = last_row["Month"] + pd.DateOffset(months=1)
 
-        month = int(next_month_date.month)
-        year = int(next_month_date.year)
-
+        # --- ML Features ---
         lag_1 = float(last_row["Quantity"])
         lag_12 = float(prod_df.iloc[-12]["Quantity"]) if len(prod_df) >= 12 else lag_1
         rolling_3 = float(prod_df["Quantity"].tail(3).mean())
 
         X = pd.DataFrame([{
-            "month": month,
-            "year": year,
+            "month": next_month_date.month,
+            "year": next_month_date.year,
             "lag_1": lag_1,
             "lag_12": lag_12,
             "rolling_3": rolling_3,
@@ -52,20 +50,40 @@ def predict_next_month():
             "Selling_Price": float(last_row["Selling_Price"])
         }])
 
-        pred_qty = model.predict(X)[0]
-        pred_qty = int(round(float(pred_qty)))   # 👈 cast
+        pred_qty = int(round(float(model.predict(X)[0])))
+
+        # --- BUSINESS METRICS ---
+        avg_sales = int(round(prod_df["Quantity"].tail(6).mean()))
+
+        trend_pct = ((lag_1 - avg_sales) / avg_sales) * 100
+
+        recommended_qty = int(round(pred_qty * 1.1))  # 10% buffer
+
+        investment = round(recommended_qty * float(last_row["Cost_Price"]), 2)
 
         profit = (float(last_row["Selling_Price"]) -
                   float(last_row["Cost_Price"])) * pred_qty
 
+        margin = round(
+            ((float(last_row["Selling_Price"]) -
+              float(last_row["Cost_Price"])) /
+             float(last_row["Selling_Price"])) * 100, 2)
+
+        confidence = "high" if len(prod_df) >= 6 else "medium"
+
         results.append({
-            "product": str(product),
-            "next_month": next_month_date.strftime("%Y-%m"),
-            "predicted_quantity": int(pred_qty),     # 👈 cast
-            "estimated_profit": float(round(profit, 2))
+            "product": product,
+            "trend": f"{trend_pct:.0f}%",
+            "avg_sales": avg_sales,
+            "predicted_demand": pred_qty,
+            "recommended_order": recommended_qty,
+            "investment": investment,
+            "expected_profit": round(profit, 2),
+            "margin": margin,
+            "confidence": confidence
         })
 
     return jsonify({
-        "message": "Next month prediction with profit successful",
+        "message": "Smart forecast generated",
         "forecast": results
     })
