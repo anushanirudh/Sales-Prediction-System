@@ -1,7 +1,6 @@
 import { useState } from "react";
 import UploadForm from "../components/UploadForm";
 import Dashboard from "./Dashboard";
-import sample from "../services/api";
 
 export default function Home() {
   const [data, setData] = useState(null);
@@ -14,7 +13,7 @@ export default function Home() {
         and recommends optimal order quantities
       </p>
 
-      <UploadForm onSample={() => setData(sample)} />
+      <UploadForm setAppData={setData} />
 
       {data && <Dashboard data={data} />}
     </div>

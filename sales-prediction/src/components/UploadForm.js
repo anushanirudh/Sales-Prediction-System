@@ -1,29 +1,32 @@
+import { useState } from "react";
+import { uploadCSVAndPredict } from "../services/api";
 import "./upload.css";
 
-export default function UploadForm({ onSample }) {
+export default function UploadForm({ setAppData }) {
+  const [file, setFile] = useState(null);
+
+  const handleUpload = async () => {
+    if (!file) return alert("Please select a CSV file");
+
+    try {
+      const data = await uploadCSVAndPredict(file);
+      setAppData(data); // 🔥 THIS CONNECTS EVERYTHING
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed");
+    }
+  };
+
   return (
     <div className="upload-container">
-      <h2>Upload Your Sales Data</h2>
-      <p>Import your historical sales data to get personalized predictions</p>
-
       <div className="upload-box">
-        <div className="csv-info">
-          <strong>CSV Format Required:</strong>
-          <p>product, month, quantitySold, revenue</p>
-          <p>Example: "Rice (kg)", "2025-01", 150, 600.00</p>
-        </div>
-
-        <div className="upload-actions">
-          <button className="upload-btn">Upload CSV File</button>
-          <span>or use the sample data below</span>
-        </div>
-
-        <p className="note">
-          Currently showing sample data with 6 months of sales history.
-        </p>
-
-        <button onClick={onSample} className="sample-btn">
-          Use Sample Data
+        <input
+          type="file"
+          accept=".csv"
+          onChange={(e) => setFile(e.target.files[0])}
+        />
+        <button className="upload-btn" onClick={handleUpload}>
+          Upload CSV
         </button>
       </div>
     </div>

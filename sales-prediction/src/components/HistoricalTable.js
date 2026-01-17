@@ -1,7 +1,6 @@
-import historicalData from "../services/historicalData";
 import "./historical.css";
 
-export default function HistoricalTable() {
+export default function HistoricalTable({ data }) {
   return (
     <div className="history-container">
       <h2>Historical Sales Data</h2>
@@ -17,7 +16,7 @@ export default function HistoricalTable() {
           </tr>
         </thead>
         <tbody>
-          {historicalData.map((row, index) => (
+          {data.map((row, index) => (
             <tr key={index}>
               <td>{row.product}</td>
               <td>{row.month}</td>
