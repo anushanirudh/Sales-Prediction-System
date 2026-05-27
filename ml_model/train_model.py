@@ -19,7 +19,6 @@ def train_model():
         "month",
         "year",
         "lag_1",
-        "lag_12",
         "rolling_3",
         "Cost_Price",
         "Selling_Price"
