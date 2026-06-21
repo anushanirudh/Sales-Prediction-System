@@ -2,10 +2,9 @@
 
 ## Overview
 ```
-The Sales Prediction System is a Machine Learning-based application that helps
-shopkeepers forecast future product demand using historical sales data.
-The system predicts the quantity required for the upcoming month and provides
-profit-based recommendations to support inventory planning and decision-making.
+The Sales Prediction System is a Machine Learning-based application that helps shopkeepers forecast
+future product demand using historical sales data.The system predicts the quantity required for the
+upcoming month and providesprofit-based recommendations to support inventory planning and decision-making.
 ```
 
 ## Problem Statement
@@ -117,8 +116,8 @@ Quantity
 
 ## Conclusion
 ```
-The Sales Prediction System provides a data-driven approach to inventory planning by forecasting
-future demand and estimating expected profit.The system helps shopkeepers make informed purchasing
-decisions, reduce inventory-related losses, and improve overall profitability.
+The Sales Prediction System provides a data-driven approach to inventory planning by forecasting future demand
+and estimating expected profit.The system helps shopkeepers make informed purchasing decisions, reduce inventory-related losses,
+and improve overall profitability.
 ```
 
