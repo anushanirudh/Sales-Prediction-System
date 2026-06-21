@@ -1,17 +1,18 @@
 .history-container {
-  background: white;
-  padding: 24px;
-  border-radius: 14px;
-  margin-top: 20px;
+  background: #07172d;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 18px;
+  margin-top: 18px;
 }
 
 .history-container h2 {
-  margin-bottom: 4px;
+  color: white;
 }
 
 .history-container p {
-  color: #6b7280;
-  margin-bottom: 16px;
+  color: #6f87aa;
+  margin-bottom: 20px;
 }
 
 .history-table {
@@ -20,14 +21,20 @@
 }
 
 .history-table th {
+  color: white;
   text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
 .history-table td {
-  padding: 12px;
-  border-bottom: 1px solid #f1f5f9;
+  color: #dce8f5;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+
+.history-table tr:hover {
+  background: rgba(255,255,255,.02);
 }
 
 .center {

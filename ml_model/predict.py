@@ -1,58 +1,249 @@
-import os
-import joblib
+from flask import Blueprint, jsonify
 import pandas as pd
+import os
+import traceback
 
-from data_preprocessing import load_data, create_features
+from models.model_loader import load_model
+from services.data_cleaning import clean_data
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "saved_model", "model.pkl")
+# -------------------------------
+# TRACK FILE
+# -------------------------------
+TRACK_FILE = 'uploads/latest.txt'
 
-SAFETY_BUFFER = 0.15
+# -------------------------------
+# BLUEPRINT
+# -------------------------------
+predict_bp = Blueprint('predict', __name__)
 
+# -------------------------------
+# LOAD MODEL
+# -------------------------------
+try:
+    model = load_model()
+    print("MODEL LOADED SUCCESSFULLY")
+
+except Exception as e:
+    print("MODEL LOAD ERROR:", str(e))
+    model = None
+
+
+# -------------------------------
+# PREDICT ROUTE
+# -------------------------------
+@predict_bp.route('/', methods=['POST'])
 def predict_next_month():
-    if not os.path.exists(MODEL_PATH):
-        raise FileNotFoundError(
-            "Model not found. Please run train_model.py first."
+
+    try:
+
+        print("\n========== PREDICT API HIT ==========")
+
+        # -------------------------------
+        # CHECK latest.txt
+        # -------------------------------
+        if not os.path.exists(TRACK_FILE):
+            return jsonify({
+                "error": "latest.txt not found"
+            }), 400
+
+        # -------------------------------
+        # READ FILE PATH
+        # -------------------------------
+        with open(TRACK_FILE, 'r') as f:
+            file_path = f.read().strip()
+
+        print("CSV PATH:", file_path)
+
+        # -------------------------------
+        # CHECK CSV EXISTS
+        # -------------------------------
+        if not os.path.exists(file_path):
+            return jsonify({
+                "error": f"CSV file not found: {file_path}"
+            }), 400
+
+        # -------------------------------
+        # READ CSV
+        # -------------------------------
+        df = pd.read_csv(file_path)
+
+        print("\nCSV LOADED")
+        print(df.head())
+
+        print("\nCOLUMNS:")
+        print(df.columns.tolist())
+
+        # -------------------------------
+        # CLEAN COLUMN NAMES
+        # -------------------------------
+        df.columns = df.columns.str.strip()
+
+        # -------------------------------
+        # REQUIRED COLUMNS
+        # -------------------------------
+        required_columns = [
+            "Month",
+            "Product",
+            "Quantity",
+            "Revenue",
+            "Cost_Price",
+            "Selling_Price"
+        ]
+
+        missing = [
+            col for col in required_columns
+            if col not in df.columns
+        ]
+
+        if missing:
+            return jsonify({
+                "error": f"Missing columns: {missing}"
+            }), 400
+
+        # -------------------------------
+        # CLEAN DATA
+        # -------------------------------
+        df = clean_data(df)
+
+        print("\nDATA CLEANED")
+
+        # -------------------------------
+        # CONVERT MONTH
+        # -------------------------------
+        df["Month"] = pd.to_datetime(
+            df["Month"],
+            format="%Y-%m",
+            errors='coerce'
         )
 
-    model = joblib.load(MODEL_PATH)
+        print("\nMONTH CONVERTED")
 
-    df = load_data()
-    df = create_features(df)
+        # -------------------------------
+        # CHECK MODEL
+        # -------------------------------
+        if model is None:
+            return jsonify({
+                "error": "Model not loaded"
+            }), 500
 
-    last_row = df.iloc[-1]
-    next_month = last_row["Month"] + pd.DateOffset(months=1)
+        # -------------------------------
+        # STORE RESULTS
+        # -------------------------------
+        recommendations = []
 
-    input_data = pd.DataFrame({
-        "Month": [next_month.month],
-        "year": [next_month.year],
-        "lag_1": [last_row["Quantity"]],
-        "lag_12": [df.iloc[-12]["Quantity"]],
-        "rolling_3": [df.tail(3)["Quantity"].mean()],
-        "Cost_Price": [last_row["Cost_Price"]],
-        "Selling_Price": [last_row["Selling_Price"]]
-    })
+        # -------------------------------
+        # PRODUCT-WISE PREDICTION
+        # -------------------------------
+        for product in df["Product"].unique():
 
-    forecast = model.predict(input_data)[0]
-    recommended_stock = int(round(forecast * (1 + SAFETY_BUFFER)))
+            print(f"\nPROCESSING PRODUCT: {product}")
 
-    variance = df["Quantity"].tail(6).std()
+            # Filter product
+            prod_df = df[
+                df["Product"] == product
+            ].sort_values("Month")
 
-    risk = "Low"
-    if variance > 30:
-        risk = "High"
-    elif variance > 15:
-        risk = "Medium"
+            # Last row
+            last_row = prod_df.iloc[-1]
 
-    return {
-        "product": last_row["Product"],
-        "forecast_month": next_month.strftime("%Y-%m"),
-        "predicted_demand": int(round(forecast)),
-        "recommended_stock": recommended_stock,
-        "risk_level": risk
-    }
+            # Next month
+            next_month_date = (
+                last_row["Month"] + pd.DateOffset(months=1)
+            )
 
-if __name__ == "__main__":
-    result = predict_next_month()
-    print("\nPrediction Result")
-    print(result)
+            # Previous month sales
+            lag_1 = float(last_row["Quantity"])
+
+            # Rolling average
+            rolling_3 = float(
+                prod_df["Quantity"].tail(3).mean()
+            )
+
+            # -------------------------------
+            # MODEL INPUT
+            # -------------------------------
+            X = pd.DataFrame([{
+                "month": next_month_date.month,
+                "year": next_month_date.year,
+                "lag_1": lag_1,
+                "rolling_3": rolling_3,
+                "Cost_Price": float(last_row["Cost_Price"]),
+                "Selling_Price": float(last_row["Selling_Price"])
+            }])
+
+            print("\nMODEL INPUT:")
+            print(X)
+
+            # -------------------------------
+            # PREDICT
+            # -------------------------------
+            prediction = model.predict(X)
+
+            print("PREDICTION:", prediction)
+
+            pred_qty = int(
+                round(float(prediction[0]))
+            )
+
+            # -------------------------------
+            # BUFFER
+            # -------------------------------
+            buffer_percent = 0.10
+
+            buffer_qty = int(
+                round(pred_qty * buffer_percent)
+            )
+
+            final_quantity = pred_qty + buffer_qty
+
+            # -------------------------------
+            # PROFIT
+            # -------------------------------
+            profit_per_unit = (
+                float(last_row["Selling_Price"])
+                - float(last_row["Cost_Price"])
+            )
+
+            expected_profit = (
+                final_quantity * profit_per_unit
+            )
+
+            # -------------------------------
+            # STORE RESULT
+            # -------------------------------
+            recommendations.append({
+
+                "product": product,
+
+                "predicted_demand": pred_qty,
+
+                "buffer_added": buffer_qty,
+
+                "recommended_quantity": final_quantity,
+
+                "profit_per_unit": round(
+                    profit_per_unit, 2
+                ),
+
+                "expected_profit": round(
+                    expected_profit, 2
+                )
+            })
+
+        print("\nSUCCESS")
+
+        # -------------------------------
+        # FINAL RESPONSE
+        # -------------------------------
+        return jsonify({
+            "recommendations": recommendations
+        })
+
+    except Exception as e:
+
+        print("\n========= FULL ERROR =========")
+        traceback.print_exc()
+
+        return jsonify({
+            "error": str(e)
+        }), 500
