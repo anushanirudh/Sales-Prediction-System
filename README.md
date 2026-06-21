@@ -2,8 +2,9 @@
 
 ## Overview
 ```
-The Sales Prediction System is a Machine Learning-based application that helps shopkeepers forecast future product
-demand using historical sales data.The system predicts the quantity required for the upcoming month and provides
+The Sales Prediction System is a Machine Learning-based application that helps
+shopkeepers forecast future product demand using historical sales data.
+The system predicts the quantity required for the upcoming month and provides
 profit-based recommendations to support inventory planning and decision-making.
 ```
 
@@ -15,19 +16,20 @@ Overstocking products, leading to wastage and storage costs.
 Understocking products, resulting in missed sales opportunities.
 Lack of data-driven inventory planning.
 
-This project aims to predict future sales demand and recommend optimal stock quantities using Machine Learning.
+This project aims to predict future sales demand and recommend optimal
+stock quantities using Machine Learning.
 
 ```
 
 ## Features
 ```
-Upload sales dataset (CSV format)
-Automatic data cleaning and preprocessing
-Demand forecasting using Machine Learning
-Product-wise sales prediction
-Safety buffer calculation
-Profit estimation
-Dashboard for results visualization
+-Upload sales dataset (CSV format)
+-Automatic data cleaning and preprocessing
+-Demand forecasting using Machine Learning
+-Product-wise sales prediction
+-Safety buffer calculation
+-Profit estimation
+-Dashboard for results visualization
 ```
 ## Technology
 ### Frontend 
